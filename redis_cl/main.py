@@ -4,6 +4,7 @@ creds https://redis.readthedocs.io/en/stable/examples/connection_examples.html
 from typing import overload
 from functools import wraps
 from redis import Redis
+from redis.exceptions import AuthenticationError
 import json
 
 class RS:
@@ -45,7 +46,7 @@ class RS:
     def check_connection(self):
         try:
             return self.conn.ping(), "okay"
-        except (AttributeError, Exception) as err_msg:
+        except (AttributeError, AuthenticationError) as err_msg:
             return False, err_msg
 
     def set(self, key, value):
@@ -74,7 +75,7 @@ class RS:
         if not self.conn:
             self.connect()
         if not isinstance(key, (str, list)):
-            raise Exception('as key supports only str\list')
+            raise KeyError('as key supports only str or list')
         return self.conn.mget(key) if isinstance(key, list) else self.conn.get(key)
 
     def disconnect(self):
