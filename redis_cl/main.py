@@ -1,7 +1,10 @@
+"""
+creds https://redis.readthedocs.io/en/stable/examples/connection_examples.html        
+"""
 from typing import overload
-
+from functools import wraps
 from redis import Redis
-
+import json
 
 class RS:
     def __init__(
@@ -26,7 +29,6 @@ class RS:
         self.conn = None
 
     def connect(self):
-        # more about type of creds https://redis.readthedocs.io/en/stable/examples/connection_examples.html
         self.conn = Redis(
             host=self.host,
             port=self.port,
@@ -84,10 +86,9 @@ class RS:
         """decorator"""
         @wraps(func)
         def wrapper(*args, **kwargs):
-            # собираем ключ из аргументов ф-и.
+            # key generate 
             key_parts = [func.__name__] + list(args)
             key = '-'.join(key_parts) + ': ' + str(sorted(kwargs.items()))
-            # print(key)
 
             if self.check_connection()[0]:
                 result = self.get(key)
