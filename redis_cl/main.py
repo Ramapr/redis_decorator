@@ -1,11 +1,13 @@
 """
 creds https://redis.readthedocs.io/en/stable/examples/connection_examples.html        
 """
+
 from typing import overload
 from functools import wraps
 from redis import Redis
 from redis.exceptions import AuthenticationError
 import json
+
 
 class RS:
     def __init__(
@@ -75,7 +77,7 @@ class RS:
         if not self.conn:
             self.connect()
         if not isinstance(key, (str, list)):
-            raise KeyError('as key supports only str or list')
+            raise KeyError("as key supports only str or list")
         return self.conn.mget(key) if isinstance(key, list) else self.conn.get(key)
 
     def disconnect(self):
@@ -85,11 +87,11 @@ class RS:
 
     def get_cache(self, func):
         """decorator"""
+        
         @wraps(func)
         def wrapper(*args, **kwargs):
-            # key generate 
             key_parts = [func.__name__] + list(args)
-            key = '-'.join(key_parts) + ': ' + str(sorted(kwargs.items()))
+            key = "-".join(key_parts) + ": " + str(sorted(kwargs.items()))
 
             if self.check_connection()[0]:
                 result = self.get(key)
@@ -99,4 +101,5 @@ class RS:
             if value:
                 self.set(key, json.dumps(value))
             return value
+            
         return wrapper
