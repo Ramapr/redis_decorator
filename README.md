@@ -2,7 +2,7 @@
 
 
 ```python
-improt RS
+from redis_cl.main import RS
 
 rs = RS(host='localhost', port=6379, db=0, password='pass')
 rs.connect()
